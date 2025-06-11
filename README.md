@@ -1,6 +1,3 @@
-# Usage Example (add to README.md)
-=begin
-
 # UPS Shipping Ruby Gem
 
 A Ruby wrapper for the UPS Shipping API that allows you to get shipping rates and create shipping labels.
@@ -108,6 +105,3 @@ puts "Label URL: #{result[:label_url]}"
 - 12: UPS 3 Day Select
 - 13: UPS Next Day Air Saver
 - 14: UPS Next Day Air Early AM
-
-=end
-

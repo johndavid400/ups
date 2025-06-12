@@ -1,13 +1,10 @@
 module UpsShipping
   class RateRequest
-    attr_accessor :shipper, :ship_to, :ship_from, :packages, :service_code, :reference
+    attr_accessor :shipper, :ship_to, :ship_from, :packages, :service_code, :reference, :dcis_type
 
-    def initialize(attributes = {})
+    def initialize(attrs = {})
+      attrs.map{|k, v| send("#{k}=", v) if respond_to?("#{k}=") }
       @packages = []
-
-      attributes.each do |key, value|
-        send("#{key}=", value) if respond_to?("#{key}=")
-      end
     end
 
     def add_package(package)

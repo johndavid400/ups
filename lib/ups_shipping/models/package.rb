@@ -1,16 +1,13 @@
 module UpsShipping
   class Package
-    attr_accessor :description, :packaging_type, :length, :width, :height,
-                  :weight, :dimension_unit, :weight_unit
+    attr_accessor :description, :packaging_type, :length, :width, :height, :weight, :dimension_unit, :weight_unit, :value
 
-    def initialize(attributes = {}, dimensions: 'IN', weight: 'LBS', packaging: '02')
-      @dimension_unit = dimensions # default to IN
-      @weight_unit = weight # default to LBS
-      @packaging_type = packaging # default to '02' == Customer Supplied Package
+    def initialize(attrs = {})
+      attrs.map{|k,v| send("#{k}=", v) if respond_to?("#{k}=") }
 
-      attributes.each do |key, value|
-        send("#{key}=", value) if respond_to?("#{key}=")
-      end
+      @dimension_unit ||= 'IN'
+      @weight_unit ||= 'LBS'
+      @packaging_type ||= '02' # Customer Supplied Package
     end
 
     def validate!

@@ -1,12 +1,9 @@
 module UpsShipping
   class Address
-    attr_accessor :name, :company_name, :attention_name, :address_line_1, :address_line_2,
-                  :city, :state, :postal_code, :country_code, :phone, :tax_id
+    attr_accessor :name, :company_name, :attention_name, :address_line_1, :address_line_2, :city, :state, :postal_code, :country_code, :phone, :tax_id
 
-    def initialize(attributes = {})
-      attributes.each do |key, value|
-        send("#{key}=", value) if respond_to?("#{key}=")
-      end
+    def initialize(attrs = {})
+      attrs.map{|k, v| send("#{k}=", v) if respond_to?("#{k}=") }
     end
 
     def validate!

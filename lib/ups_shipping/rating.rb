@@ -47,6 +47,11 @@ module UpsShipping
                 }
               }
             },
+#            ShipmentServiceOptions: {
+#              DeliveryConfirmation: {
+#                DCISType: rate_request.dcis_type || 0 # "2" = Signature Required
+#              }
+#            },
             Package: rate_request.packages.map { |pkg| package_hash(pkg) },
             Service: {
               Code: rate_request.service_code || "03"
@@ -84,6 +89,12 @@ module UpsShipping
             Code: package.weight_unit || "LBS"
           },
           Weight: package.weight.to_s
+        },
+        PackageServiceOptions: {
+          DeclaredValue: {
+            CurrencyCode: "USD",
+            MonetaryValue: package.value
+          }
         }
       }
     end
@@ -99,7 +110,7 @@ module UpsShipping
           rates << {
             service_code: shipment['Service']['Code'],
             service_name: get_service_name(shipment['Service']['Code']),
-            total_cost: shipment['TotalCharges']['MonetaryValue'].to_f,
+            total: shipment['TotalCharges']['MonetaryValue'].to_f,
             currency: shipment['TotalCharges']['CurrencyCode'],
             transit_time: shipment['GuaranteedDelivery'] ? shipment['GuaranteedDelivery']['BusinessDaysInTransit'] : nil
           }

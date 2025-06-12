@@ -113,10 +113,9 @@ module UpsShipping
     def parse_ship_response(response)
       if response['ShipmentResponse'] && response['ShipmentResponse']['ShipmentResults']
         results = response['ShipmentResponse']['ShipmentResults']
-
         {
           tracking_number: results['ShipmentIdentificationNumber'],
-          label_url: results['PackageResults']['ShippingLabel']['GraphicImage'],
+          label_url: results['PackageResults'][0]['ShippingLabel']['GraphicImage'],
           total_cost: results['ShipmentCharges']['TotalCharges']['MonetaryValue'].to_f,
           currency: results['ShipmentCharges']['TotalCharges']['CurrencyCode']
         }

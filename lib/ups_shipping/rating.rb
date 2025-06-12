@@ -1,17 +1,15 @@
-# lib/ups_shipping/rating.rb
 module UpsShipping
   class Rating
-    attr_reader :client
+    attr_reader :client, :account_number
 
-    def initialize(client)
+    def initialize(client, account_number: nil)
       @client = client
+      @account_number = account_number || client.config.account_number
     end
 
     def get_rates(rate_request)
-      endpoint = "/api/rating/v1/Rate?requestoption=Rate"
-
+      endpoint = "/api/rating/v2409/Shop"
       payload = build_rate_payload(rate_request)
-
       response = client.post(endpoint, body: payload)
       parse_rate_response(response)
     end
@@ -40,6 +38,14 @@ module UpsShipping
             ShipFrom: {
               Name: rate_request.ship_from.company_name || rate_request.ship_from.name,
               Address: address_hash(rate_request.ship_from)
+            },
+            PaymentInformation: {
+              ShipmentCharge: {
+                Type: "01",
+                BillShipper: {
+                  AccountNumber: account_number
+                }
+              }
             },
             Package: rate_request.packages.map { |pkg| package_hash(pkg) },
             Service: {
@@ -104,7 +110,11 @@ module UpsShipping
     end
 
     def get_service_name(code)
-      service_names = {
+      service_names[code] || "Unknown Service (#{code})"
+    end
+
+    def service_names
+      @service_names ||= {
         '01' => 'UPS Next Day Air',
         '02' => 'UPS 2nd Day Air',
         '03' => 'UPS Ground',
@@ -118,8 +128,7 @@ module UpsShipping
         '59' => 'UPS 2nd Day Air AM',
         '65' => 'UPS Saver'
       }
-
-      service_names[code] || "Unknown Service (#{code})"
     end
+
   end
 end

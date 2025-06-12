@@ -5,7 +5,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["JD Warren"]
   spec.email         = ["johndavid400@gmail.com"]
   spec.summary       = "Ruby wrapper for UPS Shipping API"
-  spec.description   = "A Ruby gem that provides easy access to UPS shipping rates and label creation"
+  spec.description   = "A Ruby gem that provides easy access to UPS shipping rates and label creation using the new OAuth authentication"
   spec.homepage      = "https://github.com/johndavid400/ups_shipping"
   spec.license       = "MIT"
 

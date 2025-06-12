@@ -1,4 +1,3 @@
-# lib/ups_shipping/configuration.rb
 module UpsShipping
   class Configuration
     attr_accessor :client_id, :client_secret, :account_number, :sandbox

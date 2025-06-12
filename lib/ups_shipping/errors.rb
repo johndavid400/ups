@@ -1,4 +1,3 @@
-# lib/ups_shipping/errors.rb
 module UpsShipping
   class Error < StandardError; end
   class AuthenticationError < Error; end

@@ -1,4 +1,3 @@
-# lib/ups_shipping/models/address.rb
 module UpsShipping
   class Address
     attr_accessor :name, :company_name, :attention_name, :address_line_1, :address_line_2,

@@ -1,12 +1,10 @@
-# lib/ups_shipping/models/ship_request.rb
 module UpsShipping
   class ShipRequest
-    attr_accessor :shipper, :ship_to, :ship_from, :packages, :service_code,
-                  :reference, :description, :label_format
+    attr_accessor :shipper, :ship_to, :ship_from, :packages, :service_code, :reference, :description, :label_format
 
-    def initialize(attributes = {})
+    def initialize(attributes = {}, format: 'GIF')
       @packages = []
-      @label_format = "GIF"
+      @label_format = format # default to "GIF"
 
       attributes.each do |key, value|
         send("#{key}=", value) if respond_to?("#{key}=")

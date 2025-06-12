@@ -1,4 +1,3 @@
-# lib/ups_shipping.rb
 require 'httparty'
 require 'json'
 require 'base64'

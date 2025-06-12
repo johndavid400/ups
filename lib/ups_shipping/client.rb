@@ -1,4 +1,3 @@
-# lib/ups_shipping/client.rb
 module UpsShipping
   class Client
     include HTTParty
@@ -21,16 +20,21 @@ module UpsShipping
 
     private
 
-    def authenticate
-      auth_string = Base64.strict_encode64("#{@config.client_id}:#{@config.client_secret}")
+    def auth_headers
+      {
+        'Authorization' => "Basic #{auth_string}",
+        'X-Merchant-Id' => @config.client_id,
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/x-www-form-urlencoded'
+      }
+    end
 
-      response = HTTParty.post(@config.oauth_url, {
-        headers: {
-          'Authorization' => "Basic #{auth_string}",
-          'Content-Type' => 'application/x-www-form-urlencoded'
-        },
-        body: 'grant_type=client_credentials'
-      })
+    def auth_string
+      @auth_string ||= Base64.strict_encode64("#{@config.client_id}:#{@config.client_secret}")
+    end
+
+    def authenticate
+      response = HTTParty.post(@config.oauth_url, { headers: auth_headers, body: 'grant_type=client_credentials' })
 
       if response.success?
         @access_token = response.parsed_response['access_token']
@@ -39,19 +43,16 @@ module UpsShipping
       end
     end
 
-    def request(method, endpoint, options = {})
-      url = "#{@config.base_url}#{endpoint}"
-
-      headers = {
+    def request_headers
+      {
         'Authorization' => "Bearer #{@access_token}",
         'Content-Type' => 'application/json'
-      }.merge(options[:headers] || {})
+      }
+    end
 
-      response = HTTParty.send(method, url, {
-        headers: headers,
-        body: options[:body]&.to_json
-      })
-
+    def request(method, endpoint, opts = {})
+      url = "#{@config.base_url}#{endpoint}"
+      response = HTTParty.send(method, url, { headers: request_headers.merge(opts[:headers] || {}), body: opts[:body]&.to_json })
       handle_response(response)
     end
 

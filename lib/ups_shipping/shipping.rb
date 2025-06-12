@@ -1,17 +1,15 @@
-# lib/ups_shipping/shipping.rb
 module UpsShipping
   class Shipping
-    attr_reader :client
+    attr_reader :client, :account_number
 
-    def initialize(client)
+    def initialize(client, account_number: nil)
       @client = client
+      @account_number = account_number || client.config.account_number
     end
 
     def create_shipment(ship_request)
-      endpoint = "/api/shipments/v1/ship?requestoption=nonvalidate"
-
+      endpoint = "/api/shipments/v2409/ship"
       payload = build_ship_payload(ship_request)
-
       response = client.post(endpoint, body: payload)
       parse_ship_response(response)
     end
@@ -59,7 +57,7 @@ module UpsShipping
               ShipmentCharge: {
                 Type: "01",
                 BillShipper: {
-                  AccountNumber: client.config.account_number
+                  AccountNumber: account_number
                 }
               }
             },

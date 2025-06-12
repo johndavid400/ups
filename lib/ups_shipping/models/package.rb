@@ -1,13 +1,12 @@
-# lib/ups_shipping/models/package.rb
 module UpsShipping
   class Package
     attr_accessor :description, :packaging_type, :length, :width, :height,
                   :weight, :dimension_unit, :weight_unit
 
-    def initialize(attributes = {})
-      @dimension_unit = "IN"
-      @weight_unit = "LBS"
-      @packaging_type = "02" # Customer Supplied Package
+    def initialize(attributes = {}, dimensions: 'IN', weight: 'LBS', packaging: '02')
+      @dimension_unit = dimensions # default to IN
+      @weight_unit = weight # default to LBS
+      @packaging_type = packaging # default to '02' == Customer Supplied Package
 
       attributes.each do |key, value|
         send("#{key}=", value) if respond_to?("#{key}=")

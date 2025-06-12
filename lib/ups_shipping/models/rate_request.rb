@@ -1,4 +1,3 @@
-# lib/ups_shipping/models/rate_request.rb
 module UpsShipping
   class RateRequest
     attr_accessor :shipper, :ship_to, :ship_from, :packages, :service_code, :reference

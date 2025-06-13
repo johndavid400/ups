@@ -2,6 +2,8 @@
 
 A Ruby wrapper for the UPS Shipping API that allows you to get shipping rates and create shipping labels.
 
+This gem handles the new OAuth flow in the UPS API that retrieves a JWT first to make requests with. It will allow you to fetch rates for a given package and purchase a shipping label.
+
 ## Installation
 
 Add this line to your application's Gemfile:

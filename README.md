@@ -13,6 +13,8 @@ gem 'ups'
 ## Configuration
 
 ```ruby
+# config/initializers/ups.rb
+
 Ups.configure do |config|
   config.client_id = Rails.application.credentials.ups.client_id
   config.client_secret = Rails.application.credentials.ups.client_secret

@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = "ups"
-  spec.version       = "0.0.1"
+  spec.version       = "0.0.2"
   spec.authors       = ["JD Warren"]
   spec.email         = ["johndavid400@gmail.com"]
   spec.summary       = "Ruby wrapper for UPS Shipping API"

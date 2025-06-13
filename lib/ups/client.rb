@@ -1,4 +1,4 @@
-module UpsShipping
+module Ups
   class Client
     include HTTParty
 

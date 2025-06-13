@@ -1,4 +1,4 @@
-module UpsShipping
+module Ups
   class Package
     attr_accessor :description, :packaging_type, :length, :width, :height, :weight, :dimension_unit, :weight_unit, :value
 

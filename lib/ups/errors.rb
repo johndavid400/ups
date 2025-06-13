@@ -1,4 +1,4 @@
-module UpsShipping
+module Ups
   class Error < StandardError; end
   class AuthenticationError < Error; end
   class ValidationError < Error; end

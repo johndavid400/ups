@@ -1,4 +1,4 @@
-module UpsShipping
+module Ups
   class Address
     attr_accessor :name, :company_name, :attention_name, :address_line_1, :address_line_2, :city, :state, :postal_code, :country_code, :phone, :tax_id
 

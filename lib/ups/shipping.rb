@@ -1,4 +1,4 @@
-module UpsShipping
+module Ups
   class Shipping
     attr_reader :client, :account_number
 

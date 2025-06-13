@@ -1,4 +1,4 @@
-module UpsShipping
+module Ups
   class Rating
     attr_reader :client, :account_number
 

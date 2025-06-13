@@ -1,4 +1,4 @@
-module UpsShipping
+module Ups
   class Configuration
     attr_accessor :client_id, :client_secret, :account_number, :sandbox
 

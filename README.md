@@ -7,17 +7,17 @@ A Ruby wrapper for the UPS Shipping API that allows you to get shipping rates an
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'ups_shipping'
+gem 'ups'
 ```
 
 ## Configuration
 
 ```ruby
-UpsShipping.configure do |config|
-  config.client_id = "your_ups_client_id"
-  config.client_secret = "your_ups_client_secret"
-  config.account_number = "your_ups_account_number"
-  config.sandbox = true # Set to false for production
+Ups.configure do |config|
+  config.client_id = Rails.application.credentials.ups.client_id
+  config.client_secret = Rails.application.credentials.ups.client_secret
+  config.account_number = Rails.application.credentials.ups.account
+  config.sandbox = false
 end
 ```
 
@@ -27,7 +27,7 @@ end
 
 ```ruby
 # Create addresses
-shipper = UpsShipping::Address.new(
+shipper = Ups::Address.new(
   company_name: "ACME Corp",
   address_line_1: "123 Main St",
   city: "Atlanta",
@@ -37,7 +37,7 @@ shipper = UpsShipping::Address.new(
   phone: "1234567890"
 )
 
-ship_to = UpsShipping::Address.new(
+ship_to = Ups::Address.new(
   name: "John Doe",
   address_line_1: "456 Oak Ave",
   city: "New York",
@@ -47,7 +47,7 @@ ship_to = UpsShipping::Address.new(
 )
 
 # Create package
-package = UpsShipping::Package.new(
+package = Ups:Package.new(
   length: 10,
   width: 8,
   height: 6,
@@ -55,7 +55,7 @@ package = UpsShipping::Package.new(
 )
 
 # Create rate request
-rate_request = UpsShipping::RateRequest.new(
+rate_request = Ups::RateRequest.new(
   shipper: shipper,
   ship_to: ship_to,
   ship_from: shipper,
@@ -64,7 +64,7 @@ rate_request = UpsShipping::RateRequest.new(
 rate_request.add_package(package)
 
 # Get rates
-rating_service = UpsShipping::Rating.new(UpsShipping.client)
+rating_service = Ups::Rating.new(Ups.client)
 rates = rating_service.get_rates(rate_request)
 
 rates.each do |rate|
@@ -76,7 +76,7 @@ end
 
 ```ruby
 # Create ship request (using same addresses and packages from above)
-ship_request = UpsShipping::ShipRequest.new(
+ship_request = Ups::ShipRequest.new(
   shipper: shipper,
   ship_to: ship_to,
   ship_from: shipper,
@@ -86,7 +86,7 @@ ship_request = UpsShipping::ShipRequest.new(
 ship_request.add_package(package)
 
 # Create shipment
-shipping_service = UpsShipping::Shipping.new(UpsShipping.client)
+shipping_service = Ups::Shipping.new(Ups.client)
 result = shipping_service.create_shipment(ship_request)
 
 puts "Tracking Number: #{result[:tracking_number]}"

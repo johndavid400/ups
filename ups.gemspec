@@ -1,12 +1,11 @@
-# ups_shipping.gemspec
 Gem::Specification.new do |spec|
-  spec.name          = "ups_shipping"
+  spec.name          = "ups"
   spec.version       = "0.0.1"
   spec.authors       = ["JD Warren"]
   spec.email         = ["johndavid400@gmail.com"]
   spec.summary       = "Ruby wrapper for UPS Shipping API"
   spec.description   = "A Ruby gem that provides easy access to UPS shipping rates and label creation using the new OAuth authentication"
-  spec.homepage      = "https://github.com/johndavid400/ups_shipping"
+  spec.homepage      = "https://github.com/johndavid400/ups"
   spec.license       = "MIT"
 
   spec.files         = Dir["lib/**/*", "README.md"]

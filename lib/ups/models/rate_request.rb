@@ -1,11 +1,10 @@
-module UpsShipping
-  class ShipRequest
-    attr_accessor :shipper, :ship_to, :ship_from, :packages, :service_code, :reference, :description, :label_format
+module Ups
+  class RateRequest
+    attr_accessor :shipper, :ship_to, :ship_from, :packages, :service_code, :reference, :dcis_type
 
     def initialize(attrs = {})
       attrs.map{|k, v| send("#{k}=", v) if respond_to?("#{k}=") }
       @packages = []
-      @label_format ||= "GIF"
     end
 
     def add_package(package)

@@ -107,6 +107,16 @@ module Ups
             Code: package.weight_unit || "LBS"
           },
           Weight: package.weight.to_s
+        },
+        PackageServiceOptions: {
+          DeclaredValue: {
+            CurrencyCode: "USD",
+            MonetaryValue: package.value
+          }
+        },
+        InsuredValue: {
+          CurrencyCode: "USD",
+          MonetaryValue: package.value
         }
       }
     end

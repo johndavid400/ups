@@ -68,7 +68,7 @@ rating_service = Ups::Rating.new(Ups.client)
 rates = rating_service.get_rates(rate_request)
 
 rates.each do |rate|
-  puts "#{rate[:service_name]}: $#{rate[:total_cost]} #{rate[:currency]}"
+  puts "#{rate[:service_name]}: $#{rate[:total]} #{rate[:currency]}"
 end
 ```
 
@@ -90,8 +90,8 @@ shipping_service = Ups::Shipping.new(Ups.client)
 result = shipping_service.create_shipment(ship_request)
 
 puts "Tracking Number: #{result[:tracking_number]}"
-puts "Total Cost: $#{result[:total_cost]} #{result[:currency]}"
-puts "Label URL: #{result[:label_url]}"
+puts "Total Cost: $#{result[:total]} #{result[:currency]}"
+puts "Label: #{result[:label]}"
 ```
 
 ## Service Codes

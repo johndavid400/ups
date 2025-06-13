@@ -118,7 +118,7 @@ module Ups
           tracking_number: results['ShipmentIdentificationNumber'],
           label: results['PackageResults'][0]['ShippingLabel']['GraphicImage'],
           extension: results['PackageResults'][0]['ShippingLabel']['ImageFormat']['Code'],
-          cost: results['ShipmentCharges']['TotalCharges']['MonetaryValue'].to_f,
+          total: results['ShipmentCharges']['TotalCharges']['MonetaryValue'].to_f,
           currency: results['ShipmentCharges']['TotalCharges']['CurrencyCode'],
           data: response.as_json(except: ["GraphicImage", "HTMLImage"]),
           alerts: response['ShipmentResponse']['Response']['Alert']&.map{|s| s['Description'] }

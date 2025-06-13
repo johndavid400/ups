@@ -49,7 +49,7 @@ ship_to = Ups::Address.new(
 )
 
 # Create package
-package = Ups:Package.new(
+package = Ups::Package.new(
   length: 10,
   width: 8,
   height: 6,

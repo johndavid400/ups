@@ -26,6 +26,7 @@ module UpsShipping
             }
           },
           Shipment: {
+            ShipmentDate: Date.today.to_s,
             Description: ship_request.description || "Package",
             Shipper: {
               Name: ship_request.shipper.company_name,
@@ -62,7 +63,7 @@ module UpsShipping
               }
             },
             Service: {
-              Code: ship_request.service_code || "03",
+              Code: ship_request.service_code || "02",
               Description: "Service Code"
             },
             Package: ship_request.packages.map { |pkg| package_hash(pkg) }
@@ -71,7 +72,7 @@ module UpsShipping
             LabelImageFormat: {
               Code: ship_request.label_format || "GIF"
             },
-            HTTPUserAgent: "UpsShipping Ruby Gem"
+            HTTPUserAgent: "UPS Rate Fetch"
           }
         }
       }
@@ -115,9 +116,12 @@ module UpsShipping
         results = response['ShipmentResponse']['ShipmentResults']
         {
           tracking_number: results['ShipmentIdentificationNumber'],
-          label_url: results['PackageResults'][0]['ShippingLabel']['GraphicImage'],
-          total_cost: results['ShipmentCharges']['TotalCharges']['MonetaryValue'].to_f,
-          currency: results['ShipmentCharges']['TotalCharges']['CurrencyCode']
+          label: results['PackageResults'][0]['ShippingLabel']['GraphicImage'],
+          extension: results['PackageResults'][0]['ShippingLabel']['ImageFormat']['Code'],
+          cost: results['ShipmentCharges']['TotalCharges']['MonetaryValue'].to_f,
+          currency: results['ShipmentCharges']['TotalCharges']['CurrencyCode'],
+          data: response.as_json(except: ["GraphicImage", "HTMLImage"]),
+          alerts: response['ShipmentResponse']['Response']['Alert']&.map{|s| s['Description'] }
         }
       else
         raise APIError, "Invalid shipment response: #{response}"

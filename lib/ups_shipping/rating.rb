@@ -26,6 +26,7 @@ module UpsShipping
             }
           },
           Shipment: {
+            ShipmentDate: Date.today.to_s,
             Shipper: {
               Name: rate_request.shipper.company_name,
               ShipperNumber: client.config.account_number,

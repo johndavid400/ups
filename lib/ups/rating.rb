@@ -48,12 +48,7 @@ module Ups
                 }
               }
             },
-#            ShipmentServiceOptions: {
-#              DeliveryConfirmation: {
-#                DCISType: rate_request.dcis_type || 0 # "2" = Signature Required
-#              }
-#            },
-            Package: rate_request.packages.map { |pkg| package_hash(pkg) },
+            Package: rate_request.packages.map { |pkg| package_hash(pkg, dcis_type: rate_request.dcis_type) },
             Service: {
               Code: rate_request.service_code || "03"
             }
@@ -72,8 +67,8 @@ module Ups
       }
     end
 
-    def package_hash(package)
-      {
+    def package_hash(package, dcis_type: 3)
+      base = {
         PackagingType: {
           Code: package.packaging_type || "02"
         },
@@ -95,6 +90,18 @@ module Ups
           DeclaredValue: {
             CurrencyCode: "USD",
             MonetaryValue: package.value
+          }
+        }
+      }
+      base.deep_merge!(signature_required(dcis_type)) if [2,3].include?(dcis_type.to_i)
+      base
+    end
+
+    def signature_required(type = '3')
+      {
+        PackageServiceOptions: {
+          DeliveryConfirmation: {
+            DCISType: type.to_s
           }
         }
       }

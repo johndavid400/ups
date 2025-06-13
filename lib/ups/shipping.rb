@@ -66,7 +66,7 @@ module Ups
               Code: ship_request.service_code || "02",
               Description: "Service Code"
             },
-            Package: ship_request.packages.map { |pkg| package_hash(pkg) }
+            Package: ship_request.packages.map { |pkg| package_hash(pkg, dcis_type: ship_request.dcis_type) }
           },
           LabelSpecification: {
             LabelImageFormat: {
@@ -88,8 +88,8 @@ module Ups
       }
     end
 
-    def package_hash(package)
-      {
+    def package_hash(package, dcis_type: 3)
+      base = {
         Description: package.description || "Package",
         Packaging: {
           Code: package.packaging_type || "02"
@@ -117,6 +117,18 @@ module Ups
         InsuredValue: {
           CurrencyCode: "USD",
           MonetaryValue: package.value
+        }
+      }
+      base.deep_merge!(signature_required(dcis_type)) if [2,3].include?(dcis_type.to_i)
+      base
+    end
+
+    def signature_required(type = '3')
+      {
+        PackageServiceOptions: {
+          DeliveryConfirmation: {
+            DCISType: type.to_s
+          }
         }
       }
     end

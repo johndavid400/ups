@@ -1,6 +1,6 @@
 module Ups
   class ShipRequest
-    attr_accessor :shipper, :ship_to, :ship_from, :packages, :service_code, :reference, :description, :label_format, :dcis_type
+    attr_accessor :shipper, :ship_to, :ship_from, :packages, :service_code, :reference, :description, :label_format
 
     def initialize(attrs = {})
       attrs.map{|k, v| send("#{k}=", v) if respond_to?("#{k}=") }

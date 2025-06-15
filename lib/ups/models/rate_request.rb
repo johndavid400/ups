@@ -1,6 +1,6 @@
 module Ups
   class RateRequest
-    attr_accessor :shipper, :ship_to, :ship_from, :packages, :service_code, :reference, :dcis_type
+    attr_accessor :shipper, :ship_to, :ship_from, :packages, :service_code, :reference
 
     def initialize(attrs = {})
       attrs.map{|k, v| send("#{k}=", v) if respond_to?("#{k}=") }

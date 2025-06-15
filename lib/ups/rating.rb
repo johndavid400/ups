@@ -97,7 +97,16 @@ module Ups
       base
     end
 
-    def signature_required(type = '3')
+    def signature_required(type)
+      # https://github.com/UPS-API/api-documentation/blob/main/Rating.yaml
+      # DCISType fails if the value is nil, 0, or 1...
+      # but 2 and 3 work as expected. So we need to omit
+      # the key altogether if the value is not one of 2 or 3.
+      # {
+      #   1 => 'Unsupported', # this fails for some reason, so ignore it
+      #   2 => 'Delivery Confirmation Signature Required',
+      #   3 => 'Delivery Confirmation Adult Signature Required'
+      # }
       {
         PackageServiceOptions: {
           DeliveryConfirmation: {

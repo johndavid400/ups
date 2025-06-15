@@ -48,7 +48,7 @@ module Ups
                 }
               }
             },
-            Package: rate_request.packages.map { |pkg| package_hash(pkg, dcis_type: rate_request.dcis_type) },
+            Package: rate_request.packages.map { |pkg| package_hash(pkg) },
             Service: {
               Code: rate_request.service_code || "03"
             }
@@ -67,7 +67,7 @@ module Ups
       }
     end
 
-    def package_hash(package, dcis_type: 3)
+    def package_hash(package)
       base = {
         PackagingType: {
           Code: package.packaging_type || "02"
@@ -89,11 +89,11 @@ module Ups
         PackageServiceOptions: {
           DeclaredValue: {
             CurrencyCode: "USD",
-            MonetaryValue: package.value
+            MonetaryValue: package.insurance
           }
         }
       }
-      base.deep_merge!(signature_required(dcis_type)) if [2,3].include?(dcis_type.to_i)
+      base.deep_merge!(signature_required(package.delivery_confirmation)) if [2,3].include?(package&.delivery_confirmation.to_i)
       base
     end
 

@@ -1,6 +1,6 @@
 module Ups
   class Package
-    attr_accessor :description, :packaging_type, :length, :width, :height, :weight, :dimension_unit, :weight_unit, :value
+    attr_accessor :description, :packaging_type, :length, :width, :height, :weight, :dimension_unit, :weight_unit, :insurance, :delivery_confirmation
 
     def initialize(attrs = {})
       attrs.map{|k,v| send("#{k}=", v) if respond_to?("#{k}=") }

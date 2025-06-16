@@ -2,8 +2,9 @@ module Ups
   class Configuration
     attr_accessor :client_id, :client_secret, :account_number, :sandbox
 
-    def initialize
+    def initialize(params = {})
       @sandbox = true
+      params.map{|k, v| send("#{k}=", v) if respond_to?("#{k}=") }
     end
 
     def base_url

@@ -1,9 +1,10 @@
 module Ups
   class Configuration
-    attr_accessor :client_id, :client_secret, :account_number, :sandbox
+    attr_accessor :client_id, :client_secret, :account_number, :negotiated_rates, :sandbox
 
     def initialize(params = {})
       @sandbox = true
+      @negotiated_rates = false
       params.map{|k, v| send("#{k}=", v) if respond_to?("#{k}=") }
     end
 

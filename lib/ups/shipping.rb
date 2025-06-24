@@ -1,15 +1,17 @@
 module Ups
   class Shipping
-    attr_reader :client, :account_number
+    attr_reader :client, :account_number, :negotiated_rates
 
     def initialize(client, account_number: nil)
       @client = client
       @account_number = account_number || client.config.account_number
+      @negotiated_rates = client.config&.negotiated_rates || false
     end
 
     def create_shipment(ship_request)
       endpoint = "/api/shipments/v2409/ship"
       payload = build_ship_payload(ship_request)
+      payload.deep_merge!(negotiated_rates_json) if negotiated_rates
       response = client.post(endpoint, body: payload)
       parse_ship_response(response)
     end
@@ -78,6 +80,18 @@ module Ups
       }
     end
 
+    def negotiated_rates_json
+      {
+        ShipmentRequest: {
+          Shipment: {
+            ShipmentRatingOptions: {
+              NegotiatedRatesIndicator: "X"
+            }
+          }
+        }
+      }
+    end
+
     def address_hash(address)
       {
         AddressLine: [address.address_line_1, address.address_line_2].compact,
@@ -140,7 +154,7 @@ module Ups
           tracking_number: results['ShipmentIdentificationNumber'],
           label: results['PackageResults'][0]['ShippingLabel']['GraphicImage'],
           extension: results['PackageResults'][0]['ShippingLabel']['ImageFormat']['Code'],
-          total: results['ShipmentCharges']['TotalCharges']['MonetaryValue'].to_f,
+          total: get_rate_value(results['ShipmentCharges']),
           currency: results['ShipmentCharges']['TotalCharges']['CurrencyCode'],
           data: response.as_json(except: ["GraphicImage", "HTMLImage"]),
           alerts: response['ShipmentResponse']['Response']['Alert']&.map{|s| s['Description'] }
@@ -149,5 +163,12 @@ module Ups
         raise APIError, "Invalid shipment response: #{response}"
       end
     end
+
+    def get_rate_value(data)
+      return data.dig('NegotiatedRateCharges', 'TotalCharge', 'MonetaryValue').to_f if negotiated_rates
+
+      data.dig('TotalCharges', 'MonetaryValue').to_f
+    end
+
   end
 end

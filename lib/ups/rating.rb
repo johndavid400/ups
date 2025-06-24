@@ -1,15 +1,17 @@
 module Ups
   class Rating
-    attr_reader :client, :account_number
+    attr_reader :client, :account_number, :negotiated_rates
 
     def initialize(client, account_number: nil)
       @client = client
       @account_number = account_number || client.config.account_number
+      @negotiated_rates = client.config&.negotiated_rates || false
     end
 
     def get_rates(rate_request)
       endpoint = "/api/rating/v2409/Shop"
       payload = build_rate_payload(rate_request)
+      payload.deep_merge!(negotiated_rates_json) if negotiated_rates
       response = client.post(endpoint, body: payload)
       parse_rate_response(response)
     end
@@ -93,11 +95,11 @@ module Ups
           }
         }
       }
-      base.deep_merge!(signature_required(package.delivery_confirmation)) if [2,3].include?(package&.delivery_confirmation.to_i)
+      base.deep_merge!(signature_required_json(package.delivery_confirmation)) if [2,3].include?(package&.delivery_confirmation.to_i)
       base
     end
 
-    def signature_required(type)
+    def signature_required_json(type)
       # https://github.com/UPS-API/api-documentation/blob/main/Rating.yaml
       # DCISType fails if the value is nil, 0, or 1...
       # but 2 and 3 work as expected. So we need to omit
@@ -116,25 +118,43 @@ module Ups
       }
     end
 
+    def negotiated_rates_json
+      {
+        RateRequest: {
+          Shipment: {
+            ShipmentRatingOptions: {
+              NegotiatedRatesIndicator: "1",
+              TPFCNegotiatedRatesIndicator: "1"
+            }
+          }
+        }
+      }
+    end
+
     def parse_rate_response(response)
       rates = []
 
       if response['RateResponse'] && response['RateResponse']['RatedShipment']
         rated_shipments = response['RateResponse']['RatedShipment']
         rated_shipments = [rated_shipments] unless rated_shipments.is_a?(Array)
-
         rated_shipments.each do |shipment|
           rates << {
             service_code: shipment['Service']['Code'],
             service_name: get_service_name(shipment['Service']['Code']),
-            total: shipment['TotalCharges']['MonetaryValue'].to_f,
-            currency: shipment['TotalCharges']['CurrencyCode'],
+            total: get_rate_value(shipment),
+            currency: shipment.dig('TotalCharges', 'CurrencyCode'),
             transit_time: shipment['GuaranteedDelivery'] ? shipment['GuaranteedDelivery']['BusinessDaysInTransit'] : nil
           }
         end
       end
 
       rates
+    end
+
+    def get_rate_value(data)
+      return data.dig('NegotiatedRateCharges', 'TotalCharge', 'MonetaryValue').to_f if negotiated_rates
+
+      data.dig('TotalCharges', 'MonetaryValue').to_f
     end
 
     def get_service_name(code)
